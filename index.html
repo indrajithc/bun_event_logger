@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Logger</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      min-height: 2000px;
+    }
+
+    #logger {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Event Logger</h1>
+  <p>Interact with the page to see events logged in the server console.</p>
+  <div id="logger">Event logs will appear here...</div>
+
+  <script>
+    const loggerDiv = document.getElementById("logger");
+
+    // Function to get query parameter value from URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    let host = null;
+    try {
+      // Get the 'host' parameter from the URL, if it exists
+      const queryHost = getQueryParam('host');
+      console.log({ queryHost })
+      host = new URL(queryHost).origin;
+    } catch (error) {
+
+    }
+
+    function logEvent(event) {
+      const logMessage = `${event.type} event detected on ${event.target.tagName}`;
+
+      // Display on-page log
+      const logItem = document.createElement("div");
+      logItem.textContent = logMessage;
+      loggerDiv.appendChild(logItem);
+
+      // Set the URL for POST request to the host + "/log" if 'host' is provided, otherwise fallback to local path
+      const url = host ? `${host}/log` : "/log";
+
+      // Send event to the server
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventType: event.type,
+          targetTag: event.target.tagName
+        })
+      }).catch(err => console.error("Error sending log:", err));
+
+      // Keep the log view scrolled to the bottom
+      loggerDiv.scrollTop = loggerDiv.scrollHeight;
+    }
+
+    const events = [
+      "click", "dblclick", "mousedown", "mouseup", "mousemove", "mouseenter", "mouseleave", "mouseover", "mouseout",
+      "keydown", "keyup", "keypress",
+      "focus", "blur", "input", "change", "submit", "reset",
+      "wheel", "scroll",
+      "drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop",
+      "touchstart", "touchmove", "touchend", "touchcancel",
+      "resize", "contextmenu"
+    ];
+    events.forEach(eventType => document.addEventListener(eventType, logEvent));
+
+    // Collect performance metrics and send to server
+    window.addEventListener("load", () => {
+      const performanceData = {
+        navigationTiming: performance.timing.toJSON(),
+        resourceTimings: performance.getEntriesByType("resource").map(resource => ({
+          name: resource.name,
+          startTime: resource.startTime,
+          duration: resource.duration
+        }))
+      };
+
+      // Set the URL for performance data POST request to the host + "/log-performance" if 'host' is provided, otherwise fallback to local path
+      const url = host ? `${host}/log-performance` : "/log-performance";
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(performanceData)
+      }).catch(err => console.error("Failed to send performance data to server:", err));
+    });
+  </script>
+</body>
+
+</html>
