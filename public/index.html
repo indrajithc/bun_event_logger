@@ -30,6 +30,15 @@
   <script>
     const loggerDiv = document.getElementById("logger");
 
+    // Function to get query parameter value from URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // Get the 'host' parameter from the URL, if it exists
+    const host = getQueryParam('host');
+
     function logEvent(event) {
       const logMessage = `${event.type} event detected on ${event.target.tagName}`;
 
@@ -38,8 +47,11 @@
       logItem.textContent = logMessage;
       loggerDiv.appendChild(logItem);
 
+      // Set the URL for POST request to the host + "/log" if 'host' is provided, otherwise fallback to local path
+      const url = host ? `${host}/log` : "/log";
+
       // Send event to the server
-      fetch("/log", {
+      fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -74,7 +86,10 @@
         }))
       };
 
-      fetch("/log-performance", {
+      // Set the URL for performance data POST request to the host + "/log-performance" if 'host' is provided, otherwise fallback to local path
+      const url = host ? `${host}/log-performance` : "/log-performance";
+
+      fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
