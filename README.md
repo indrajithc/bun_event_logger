@@ -17,7 +17,7 @@ A simple Bun-based application for tracking client-side events and logging them 
    ```bash
    git clone https://github.com/your-username/bun_event_logger.git
    cd bun_event_logger
-  ```
+    ```
 2. Run the server:
     ```bash
     bun run server.js
