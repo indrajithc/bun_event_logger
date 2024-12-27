@@ -36,8 +36,15 @@
       return urlParams.get(param);
     }
 
-    // Get the 'host' parameter from the URL, if it exists
-    const host = getQueryParam('host');
+    let host = null;
+    try {
+      // Get the 'host' parameter from the URL, if it exists
+      const queryHost = getQueryParam('host');
+      console.log({ queryHost })
+      host = new URL(queryHost).origin;
+    } catch (error) {
+
+    }
 
     function logEvent(event) {
       const logMessage = `${event.type} event detected on ${event.target.tagName}`;
