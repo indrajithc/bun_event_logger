@@ -62,6 +62,26 @@
       "resize", "contextmenu"
     ];
     events.forEach(eventType => document.addEventListener(eventType, logEvent));
+
+    // Collect performance metrics and send to server
+    window.addEventListener("load", () => {
+      const performanceData = {
+        navigationTiming: performance.timing.toJSON(),
+        resourceTimings: performance.getEntriesByType("resource").map(resource => ({
+          name: resource.name,
+          startTime: resource.startTime,
+          duration: resource.duration
+        }))
+      };
+
+      fetch("/log-performance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(performanceData)
+      }).catch(err => console.error("Failed to send performance data to server:", err));
+    });
   </script>
 </body>
 
