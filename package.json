@@ -1,0 +1,22 @@
+{
+  "name": "bun_event_logger",
+  "version": "1.0.0",
+  "description": "A Bun-based event logger that tracks user interactions and logs them on the server.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "bun run server.js",
+    "dev": "bun run server.js --watch"
+  },
+  "keywords": [
+    "bun",
+    "event-logger",
+    "user-interaction",
+    "browser-detection"
+  ],
+  "author": "indrajithc",
+  "license": "MIT",
+  "devDependencies": {
+    "bun": "^1.1.42"
+  }
+}

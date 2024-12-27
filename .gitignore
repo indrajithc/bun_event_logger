@@ -1,0 +1,30 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+bun-debug.log*
+
+# Node.js
+node_modules/
+.bun/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Bun-related files
+bun.lockb
+
+# Editor Directories and Files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
